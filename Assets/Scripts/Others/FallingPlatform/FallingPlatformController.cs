@@ -1,0 +1,65 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class FallingPlatformController : GameObjectManager
+{
+    [Header("Time")]
+    [SerializeField] private float _disableDelay;
+
+    private bool _hasBeenStepOn;
+    private bool _allowDisable;
+    private Rigidbody2D _rb;
+    private BoxCollider2D _boxCollider2D;
+
+    protected override void Awake()
+    {
+        base.Awake();
+    }
+
+    protected override void GetReferenceComponents()
+    {
+        base.GetReferenceComponents();
+        _boxCollider2D = GetComponent<BoxCollider2D>();
+        _rb = GetComponent<Rigidbody2D>();
+    }
+
+    protected override void Start()
+    {
+        base.Start();
+    }
+
+    void Update()
+    {
+        if(_hasBeenStepOn && _allowDisable)
+        {
+            _boxCollider2D.enabled = false;
+            _rb.bodyType = RigidbodyType2D.Dynamic;
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag(GameConstants.PLAYER_TAG) && !_hasBeenStepOn)
+        {
+            _hasBeenStepOn = true;
+            StartCoroutine(Disable());
+        }
+    }
+
+    private IEnumerator Disable()
+    {
+        yield return new WaitForSeconds(_disableDelay);
+
+        _allowDisable = true;
+        _anim.SetTrigger("Off");
+        gameObject.layer = 0;
+        StartCoroutine(Destroy());
+    }
+
+    private IEnumerator Destroy()
+    {
+        yield return new WaitForSeconds(1.5f);
+        Destroy(gameObject);
+    }
+}

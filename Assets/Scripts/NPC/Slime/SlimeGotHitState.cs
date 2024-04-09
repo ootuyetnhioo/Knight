@@ -1,0 +1,24 @@
+﻿using UnityEngine;
+
+public class SlimeGotHitState : CharacterBaseState
+{
+    private SlimeManager _slimeManager;
+
+    public override void EnterState(CharactersManager charactersManager)
+    {
+        base.EnterState(charactersManager);
+        _slimeManager = (SlimeManager)charactersManager;
+        _slimeManager.Animator.SetInteger(GameConstants.ANIM_PARA_STATE, (int)GameEnums.ESlimState.gotHit);
+        _slimeManager.GetDialog().StartConversationPassive = true;
+        _slimeManager.GetDialog().StartDialog(_slimeManager.GetStartIndexIfGotHit());
+    }
+
+    public override void ExitState() { }
+
+    public override void Update()
+    {
+        base.Update();
+    }
+
+    public override void FixedUpdate() { }
+}

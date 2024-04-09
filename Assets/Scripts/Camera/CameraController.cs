@@ -1,0 +1,31 @@
+﻿using Cinemachine;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class CameraController : BaseSingleton<CameraController>
+{
+    private List<CinemachineVirtualCamera> _listCamera = new();
+
+    protected override void Awake()
+    {
+        base.Awake();
+        DontDestroyOnLoad(gameObject);
+    }
+
+    public void AddCameraToList(CinemachineVirtualCamera camPara)
+    {
+        _listCamera.Add(camPara);
+    }
+
+    public void RemoveCameraFromList(CinemachineVirtualCamera camPara)
+    {
+        _listCamera.Remove(camPara);
+    }
+
+    public void SwitchingCamera(CinemachineVirtualCamera camPara)
+    {
+        foreach (var cam in _listCamera)
+            cam.Priority = (cam != camPara) ? 0 : 11;
+    }
+}
